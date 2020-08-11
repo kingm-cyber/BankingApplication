@@ -4,13 +4,21 @@
  * Made on: 8/10/2020
  */
 
+/*
+ * To Do:
+ * 1. to make the BankAccount class better, replace ints with doubles, then format
+ * so that it will only allow for 2 digits after the decimal place
+ * 2. print statements so that it says "Your balance is $2.00" instead of just 2
+ */
+
 import java.util.Scanner;
 
 public class BankingApp {
 
 	public static void main(String[] args) {
 
-		// creates a BankAccount object and try selecting options
+		BankAccount b1 = new BankAccount("1234", "Matt's Account");
+		b1.showMenu();
 
 	}
 
@@ -45,14 +53,13 @@ class BankAccount {
 	public void setBalance(int n) {
 		balance = n;
 	}
-	
-	//////////////////////////////////////////////////////////////
-	//if previous transaction is messing up, use the variable instead of the getter method inside of the printPrevT method
+
+	// if this messes up just replace getter method with variable
 	public void printPreviousTransaction() {
 		if (previousTransaction > 0) {
-			System.out.println("Deposited: " + getPreviousTransaction());
+			System.out.println("Previous Transaction: " + getPreviousTransaction() + " Deposited.");
 		} else if (previousTransaction < 0) {
-			System.out.println("Withdrawn: " + Math.abs(getPreviousTransaction()));
+			System.out.println("Previous Transaction: " + Math.abs(getPreviousTransaction()) + " Withdrawn.");
 		} else {
 			System.out.println("No previous transactions recorded.");
 		}
@@ -61,12 +68,11 @@ class BankAccount {
 	public void setPreviousTransaction(int n) {
 		previousTransaction = n;
 	}
-	
+
 	public int getPreviousTransaction() {
 		return previousTransaction;
 	}
-	//////////////////////////////////////////////////////////////
-	
+
 	public String getUserId() {
 		return userId;
 	}
@@ -83,29 +89,99 @@ class BankAccount {
 		username = k;
 	}
 
-	/*
-	 * write a deposit and withdraw method
-	 */
-	
-	//deposit method
-	//might not need to be using getter/setter methods, so check this if deposit method doesn't work
+	// deposit method
+	// might not need to be using getter/setter methods, so check this if deposit
+	// method doesn't work
 	public void deposit(int n) {
-		if(n != 0) {
-			setBalance(n);
+		if (n >= 0) {
+			setBalance(getBalance() + n);
 			setPreviousTransaction(n);
 		}
-		
+
 	}
-	
-	/*
-	 * write a showMenu method which displays options that the user can select
-	 */
-	
-	
-	
-	
-	
-	
-	
+
+	// withdraw method
+	// make this more robust so it allows users to immediately enter a different
+	// value
+	// if the amount they are trying to withdraw is wrong (use while(k - n < 0))
+	public void withdraw(int n) {
+		int k = getBalance();
+
+		if (k - n >= 0) {
+			setBalance(getBalance() - n);
+			setPreviousTransaction(0 - n);
+		} else {
+			System.out.println("You cannot withdraw that amount, please try a different amount.");
+		}
+
+	}
+
+	// showMenu method displays menu to allow for user interaction
+	public void showMenu() {
+		// create a scanner to take in input for choosing options
+		Scanner scan = new Scanner(System.in);
+		char userInput = '\0';
+
+		// create a scanner to take in input for entering an amount to deposit/withdraw
+		Scanner scan2 = new Scanner(System.in);
+		int amount = 0;
+
+		System.out.println("Welcome " + username + "!");
+		System.out.println("Your ID is: " + userId);
+		System.out.println("\n");
+		System.out.println("A. Check Balance");
+		System.out.println("B. Deposit");
+		System.out.println("C. Withdraw");
+		System.out.println("D. Check Previous Transaction");
+		System.out.println("E. Exit\n");
+
+		do {
+
+			System.out.println("-----------------------------------");
+			System.out.println("Choose an option (A-E): ");
+			System.out.println("-----------------------------------");
+			userInput = scan.next().charAt(0);
+			System.out.println("\n");
+
+			switch (userInput) {
+			case 'A':
+				System.out.println("Your current balance is: " + getBalance());
+				break;
+
+			case 'B':
+				System.out.println("Enter an amount to deposit: ");
+				amount = scan2.nextInt();
+				deposit(amount);
+				System.out.println("Your current balance is now: " + getBalance());
+				break;
+
+			case 'C':
+				System.out.println("Enter an amount to withdraw: ");
+				amount = scan2.nextInt();
+				withdraw(amount);
+				System.out.println("Your current balance is now: " + getBalance());
+				break;
+
+			case 'D':
+				printPreviousTransaction();
+				break;
+
+			case 'E':
+				System.out.println("Your final balance is: " + getBalance());
+				System.out.println("Thank you for choosing our services! Come again soon!");
+				break;
+
+			default:
+				System.out.println("Invalid Option! Please try again.");
+				System.out.println("(Reminder: Options are case sensitive!)");
+				break;
+			}
+
+		} while (userInput != 'E');
+
+		scan.close();
+		scan2.close();
+
+	}
 
 }
